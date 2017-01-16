@@ -3,7 +3,7 @@ package model
 /**
   * Created by ghseeli on 1/14/17.
   */
-trait Player {
+sealed trait Player {
   def name: String
   def symbol: String
 }

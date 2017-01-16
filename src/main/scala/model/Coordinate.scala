@@ -7,7 +7,7 @@ import scalaz.syntax.traverse._
   * Created by ghseeli on 1/14/17.
   */
 
-trait Coordinate {
+sealed trait Coordinate {
   def values: Seq[Int]
 }
 
