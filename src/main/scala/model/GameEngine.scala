@@ -5,18 +5,6 @@ package model
   */
 object GameEngine {
 
-  def playMove(board: Board[NDimlCoordinate], player: Option[Player], coordinate: NDimlCoordinate): (Board[NDimlCoordinate], Option[Status]) = {
-    if (board.validCoordinate(coordinate)) {
-      board.data.get(coordinate) match {
-        case Some(Some(occupyingPlayer)) => (board, Option(SquareAlreadyOccupied(board, Option(occupyingPlayer), coordinate)))
-        case _ => (board.playMove(coordinate, player), None)
-      }
-    } else {
-      (board, Option(InvalidCoordinate(board, coordinate)))
-    }
-
-  }
-
   def recentMoveWinner(board: Board[NDimlCoordinate]): Option[(Option[Player],Seq[NDimlCoordinate])] = {
     board.history match {
       case (coordinate: Addable[Coordinate], squareValue) :: _ =>
