@@ -33,7 +33,12 @@ case class FourDimlBoard(data: Map[NDimlCoordinate,Option[Player]], history: Seq
   override def processAction(action: BoardAction[NDimlCoordinate]): (Board[NDimlCoordinate],Option[Status]) = {
     action match {
       case PlayMove(board: Board[NDimlCoordinate],player,coordinate: NDimlCoordinate) => GameEngine.playMove(board,Option(player),coordinate)
-      case UndoLastMove(board) => (board.undoLastMove(),None)
+      case UndoLastMove(board) =>
+        if (history.nonEmpty) {
+          (board.undoLastMove(), None)
+        } else {
+          (this, Option(NothingToUndo(this)))
+        }
     }
   }
 }

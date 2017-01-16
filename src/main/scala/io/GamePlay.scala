@@ -24,23 +24,18 @@ object GamePlay {
         case _ => None
       }
       nextAction match {
-        case Some(action: PlayMove[NDimlCoordinate]) =>
+        case Some(action) =>
           action.board.processAction(action) match {
             case (board, None) =>
               currentBoard = Option(board)
-              currentPlayerIndex += 1
+              action match {
+                case _: PlayMove[_] => currentPlayerIndex += 1
+                case _: UndoLastMove[_] => currentPlayerIndex -= 1
+              }
               currentPlayerIndex = currentPlayerIndex % totalPlayers
               currentPlayer = players.lift(currentPlayerIndex)
-            case _ =>
-          }
-        case Some(action: UndoLastMove[NDimlCoordinate]) =>
-          action.board.processAction(action) match {
-            case (board, None) =>
-              currentBoard = Option(board)
-              currentPlayerIndex -= 1
-              currentPlayerIndex = currentPlayerIndex % totalPlayers
-              currentPlayer = players.lift(currentPlayerIndex)
-            case _ =>
+            case (_, Some(status)) =>
+              println(status.message)
           }
       }
       winner = currentBoard.flatMap(board => GameEngine.recentMoveWinner(board))
