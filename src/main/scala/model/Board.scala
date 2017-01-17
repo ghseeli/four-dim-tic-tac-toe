@@ -6,14 +6,14 @@ package model
 sealed trait Board[CoordinateType <: Coordinate] {
   type SquareType = Option[Player]
   def data: Map[CoordinateType, SquareType]
-  def playMove(coordinate: CoordinateType, newSquareState: SquareType): Board[CoordinateType]
-  def undoLastMove(): Board[CoordinateType]
+  protected def playMove(coordinate: CoordinateType, newSquareState: SquareType): Board[CoordinateType]
+  protected def undoLastMove(): Board[CoordinateType]
   def history: Iterable[(CoordinateType, SquareType)]
   def validCoordinate(coord: CoordinateType): Boolean
   def winningLength: Int
   def processAction(action: BoardAction[CoordinateType]): (Board[CoordinateType],Option[Status]) = {
     action match {
-      case PlayMove(board: Board[NDimlCoordinate],player,coordinate: NDimlCoordinate) =>
+      case PlayMove(board,player,coordinate) =>
         if (board.validCoordinate(coordinate)) {
           board.data.get(coordinate) match {
             case Some(Some(occupyingPlayer)) => (board, Option(SquareAlreadyOccupied(board, Option(occupyingPlayer), coordinate)))

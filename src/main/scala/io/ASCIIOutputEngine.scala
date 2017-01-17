@@ -7,7 +7,7 @@ import scalaz.syntax.traverse._
 /**
   * Created by ghseeli on 1/15/17.
   */
-object ASCIIOutputEngine {
+object ASCIIOutputEngine extends GameOutput {
   def renderBoard(board: Board[_]): String = {
     board match {
       case FourDimlBoard(data, _) =>
@@ -52,4 +52,11 @@ object ASCIIOutputEngine {
         allCoords.map(i => NDimlCoordinate(i))
     }
   }
+
+  override def displayBoard(board: Board[_]): Unit = {
+    def boardString = renderBoard(board)
+    println(boardString)
+  }
+
+  override def displayMessage(message: String): Unit = println(message)
 }

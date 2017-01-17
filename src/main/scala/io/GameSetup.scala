@@ -30,7 +30,7 @@ object GameSetup {
   }
 
   def getPlayerName(players: Seq[Player]): Option[String] = {
-    println("Please enter a unique player name.")
+    println("Please enter a unique player name or hit return to finish inputting players.")
     val playerName = scala.io.StdIn.readLine()
     val existingPlayerNames = players.map(_.name)
     if (playerName.nonEmpty && !existingPlayerNames.contains(playerName)) {

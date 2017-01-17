@@ -7,18 +7,15 @@ import scala.util.Try
 /**
   * Created by ghseeli on 1/15/17.
   */
-object GamePlay {
-  def playGame(players: Seq[Player], inBoard: Board[NDimlCoordinate]): Option[(Option[Player],Seq[NDimlCoordinate])] = {
+class GamePlay[A >: NDimlCoordinate <: Coordinate](gameEngine: GameEngine[A], output: GameOutput = ASCIIOutputEngine) {
+  def playGame(players: Seq[Player], inBoard: Board[A]): Option[(Option[Player],Seq[A])] = {
     var currentBoard = Option(inBoard)
     var currentPlayer = players.headOption
     var currentPlayerIndex = 0
     val totalPlayers = players.length
-    var winner: Option[(Option[Player],Seq[NDimlCoordinate])] = None
-    while(currentBoard.flatMap(b => GameEngine.recentMoveWinner(b)).isEmpty && currentPlayer.nonEmpty) {
-      currentBoard.map(b => ASCIIOutputEngine.renderBoard(b)) match {
-        case Some(boardString) => println(boardString)
-        case None =>
-      }
+    var winner: Option[(Option[Player],Seq[A])] = None
+    while(currentBoard.flatMap(b => gameEngine.recentMoveWinner(b)).isEmpty && currentPlayer.nonEmpty) {
+      currentBoard.foreach(b => output.displayBoard(b))
       val nextAction = (currentPlayer,currentBoard) match {
         case (Some(player),Some(board)) => getMove(player, board)
         case _ => None
@@ -38,23 +35,20 @@ object GamePlay {
               println(status.message)
           }
       }
-      winner = currentBoard.flatMap(board => GameEngine.recentMoveWinner(board))
+      winner = currentBoard.flatMap(board => gameEngine.recentMoveWinner(board))
       winner match {
         case Some(_) =>
           currentPlayer = None
         case None =>
       }
     }
-    currentBoard.map(b => ASCIIOutputEngine.renderBoard(b)) match {
-      case Some(boardString) => println(boardString)
-      case None =>
-    }
+    currentBoard.foreach(b => output.displayBoard(b))
     winner
   }
 
-  def getMove(player: Player, board: Board[NDimlCoordinate]): Option[BoardAction[NDimlCoordinate]] = {
-    println("It is " + player.name + "'s turn.")
-    println("Please enter coordinates you would like to play or type U for undo.")
+  def getMove(player: Player, board: Board[A]): Option[BoardAction[A]] = {
+    output.displayMessage("It is " + player.name + "'s turn.")
+    output.displayMessage("Please enter coordinates you would like to play or type U for undo.")
     val input = scala.io.StdIn.readLine()
     if (input.equals("U") || input.equals("u")) {
       Option(UndoLastMove(board))
@@ -64,7 +58,7 @@ object GamePlay {
     }
   }
 
-  def extractCoordinates(coordString: String): Option[NDimlCoordinate] = {
+  def extractCoordinates(coordString: String): Option[A] = {
     val data = Try(coordString.split(",").map(s => s.toInt)).toOption
     data.map(data => NDimlCoordinate(data))
   }
