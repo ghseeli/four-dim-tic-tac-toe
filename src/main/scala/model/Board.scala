@@ -34,11 +34,11 @@ sealed trait Board[CoordinateType <: Coordinate] {
 
 case class FourDimlBoard(data: Map[NDimlCoordinate,Option[Player]], history: Seq[(NDimlCoordinate, Option[Player])]) extends Board[NDimlCoordinate] {
   val winningLength = 4
-  override def playMove(coordinate: NDimlCoordinate, newSquareState: Option[Player]): FourDimlBoard = {
+  protected override def playMove(coordinate: NDimlCoordinate, newSquareState: Option[Player]): FourDimlBoard = {
     FourDimlBoard(data.updated(coordinate, newSquareState), (coordinate, newSquareState) +: history)
   }
 
-  override def undoLastMove(): FourDimlBoard = {
+  protected override def undoLastMove(): FourDimlBoard = {
     history.headOption match {
       case Some((lastCoord,player)) => FourDimlBoard(data.filterKeys(coord => coord != lastCoord), history.tail)
       case None => this
