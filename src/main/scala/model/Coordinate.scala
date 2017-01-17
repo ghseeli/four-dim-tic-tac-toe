@@ -9,6 +9,7 @@ import scalaz.syntax.traverse._
 
 sealed trait Coordinate {
   def values: Seq[Int]
+  def display: String = values.foldLeft("(")((acc,i) => acc + "," + i) + ")"
 }
 
 trait Addable[+A] {

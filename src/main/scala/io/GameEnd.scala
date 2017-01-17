@@ -8,7 +8,7 @@ import model.{Coordinate, Player}
 object GameEnd {
   def declareWinner(winner: Option[Player], winningSequence: Seq[Coordinate]): Unit = {
     winner match {
-      case Some(player) => println("Congratulations to " + player.name + " for winning with sequence " + winningSequence.toString())
+      case Some(player) => println("Congratulations to " + player.name + " for winning with sequence " + winningSequence.map(coord => coord.display).foldLeft("")(_ + ", " + _))
       case None => println("No one has won the game. So sad :-(")
     }
   }
